@@ -1,0 +1,712 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+local Window = OrionLib:MakeWindow({Name = "Kokko hub", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+
+--[[
+Name = <string> - The name of the UI.
+HidePremium = <bool> - Whether or not the user details shows Premium status or not.
+SaveConfig = <bool> - Toggles the config saving in the UI.
+ConfigFolder = <string> - The name of the folder where the configs are saved.
+IntroEnabled = <bool> - Whether or not to show the intro animation.
+IntroText = <string> - Text to show in the intro animation.
+IntroIcon = <string> - URL to the image you want to use in the intro animation.
+Icon = <string> - URL to the image you want displayed on the window.
+CloseCallback = <function> - Function to execute when the window is closed.
+]]
+local Tab = Window:MakeTab({
+	Name = "Tools",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+--[[
+Name = <string> - The name of the tab.
+Icon = <string> - The icon of the tab.
+PremiumOnly = <bool> - Makes the tab accessible to Sirus Premium users only.
+]]
+local Section = Tab:AddSection({
+	Name = "Section1"
+})
+
+--[[
+Name = <string> - The name of the section.
+]]
+OrionLib:MakeNotification({
+	Name = "Script!",
+	Content = "Made by kokko",
+	Image = "rbxassetid://4483345998",
+	Time = 9
+})
+
+--[[
+Title = <string> - The title of the notification.
+Content = <string> - The content of the notification.
+Image = <string> - The icon of the notification.
+Time = <number> - The duration of the notfication.
+]]
+OrionLib:MakeNotification({
+	Name = "UI!",
+	Content = "credits to orion for the libary",
+	Image = "rbxassetid://4483345998",
+	Time = 10
+})
+
+--[[
+Title = <string> - The title of the notification.
+Content = <string> - The content of the notification.
+Image = <string> - The icon of the notification.
+Time = <number> - The duration of the notfication.
+]]
+Tab:AddButton({
+	Name = "Noclip/fly tool!",
+	Callback = function()
+      	local x = Instance.new("HopperBin")
+x.Parent = game.Players.LocalPlayer.Backpack
+x.BinType = "Script"
+x.Name = "NoClip"
+
+local c = workspace.CurrentCamera
+local player = game.Players.LocalPlayer
+local userInput = game:GetService("UserInputService")
+local rs = game:GetService("RunService")
+local starterPlayer = game:GetService("StarterPlayer")
+
+local selected = false
+local speed = 60
+local lastUpdate = 0
+
+function getNextMovement(deltaTime)
+local nextMove = Vector3.new()
+-- Left/Right
+if userInput:IsKeyDown("A") or userInput:IsKeyDown("Left") then
+nextMove = Vector3.new(-1,0,0)
+elseif userInput:IsKeyDown("D") or userInput:IsKeyDown("Right") then
+nextMove = Vector3.new(1,0,0)
+end
+-- Forward/Back
+if userInput:IsKeyDown("W") or userInput:IsKeyDown("Up") then
+nextMove = nextMove + Vector3.new(0,0,-1)
+elseif userInput:IsKeyDown("S") or userInput:IsKeyDown("Down") then
+nextMove = nextMove + Vector3.new(0,0,1)
+end
+-- Up/Down
+if userInput:IsKeyDown("Space") then
+nextMove = nextMove + Vector3.new(0,1,0)
+elseif userInput:IsKeyDown("LeftControl") then
+nextMove = nextMove + Vector3.new(0,-1,0)
+end
+return CFrame.new( nextMove * (speed * deltaTime) )
+end
+
+function onSelected()
+local char = player.Character
+if char then
+local humanoid = char:WaitForChild("Humanoid")
+local root = char:WaitForChild("HumanoidRootPart")
+currentPos = root.Position
+selected = true
+root.Anchored = true
+lastUpdate = tick()
+humanoid.PlatformStand = true
+while selected do
+wait()
+local delta = tick()-lastUpdate
+local look = (c.Focus.p-c.CoordinateFrame.p).unit
+local move = getNextMovement(delta)
+local pos = root.Position
+root.CFrame = CFrame.new(pos,pos+look) * move
+lastUpdate = tick()
+end
+root.Anchored = false
+root.Velocity = Vector3.new()
+humanoid.PlatformStand = false
+end
+end
+
+function onDeselected()
+selected = false
+end
+
+x.Selected:connect(onSelected)
+x.Deselected:connect(onDeselected)
+  	end    
+})
+
+--[[
+Name = <string> - The name of the button.
+Callback = <function> - The function of the button.
+]]
+Tab:AddButton({
+	Name = "TP TOOL!",
+	Callback = function()
+   mouse = game.Players.LocalPlayer:GetMouse()
+tool = Instance.new("Tool")
+tool.RequiresHandle = false
+tool.Name = "TP TOOL"
+tool.Activated:connect(function()
+local pos = mouse.Hit+Vector3.new(0,2.5,0)
+pos = CFrame.new(pos.X,pos.Y,pos.Z)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = pos
+end)
+tool.Parent = game.Players.LocalPlayer.Backpack
+  	end    
+})
+
+--[[
+Name = <string> - The name of the button.
+Callback = <function> - The function of the button.
+]]
+local Tab = Window:MakeTab({
+	Name = "Character stuff",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+--[[
+Name = <string> - The name of the tab.
+Icon = <string> - The icon of the tab.
+PremiumOnly = <bool> - Makes the tab accessible to Sirus Premium users only.
+]]
+
+Tab:AddSlider({
+	Name = "Speed Changer",
+	Min = 16,
+	Max = 1000,
+	Default = 5,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "Speed Power",
+	Callback = function(Value)
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = (Value)
+	end    
+})
+
+--[[
+Name = <string> - The name of the slider.
+Min = <number> - The minimal value of the slider.
+Max = <number> - The maxium value of the slider.
+Increment = <number> - How much the slider will change value when dragging.
+Default = <number> - The default value of the slider.
+ValueName = <string> - The text after the value number.
+Callback = <function> - The function of the slider.
+]]
+Tab:AddSlider({
+	Name = "Jump Changer",
+	Min = 16,
+	Max = 1000,
+	Default = 5,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "Jump Power",
+	Callback = function(Value)
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = (Value)
+	end    
+})
+
+--[[
+Name = <string> - The name of the slider.
+Min = <number> - The minimal value of the slider.
+Max = <number> - The maxium value of the slider.
+Increment = <number> - How much the slider will change value when dragging.
+Default = <number> - The default value of the slider.
+ValueName = <string> - The text after the value number.
+Callback = <function> - The function of the slider.
+]]
+local Tab = Window:MakeTab({
+	Name = "Misc",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+--[[
+Name = <string> - The name of the tab.
+Icon = <string> - The icon of the tab.
+PremiumOnly = <bool> - Makes the tab accessible to Sirus Premium users only.
+]]
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+local Window = OrionLib:MakeWindow({Name = "Kokko hub", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+
+--[[
+Name = <string> - The name of the UI.
+HidePremium = <bool> - Whether or not the user details shows Premium status or not.
+SaveConfig = <bool> - Toggles the config saving in the UI.
+ConfigFolder = <string> - The name of the folder where the configs are saved.
+IntroEnabled = <bool> - Whether or not to show the intro animation.
+IntroText = <string> - Text to show in the intro animation.
+IntroIcon = <string> - URL to the image you want to use in the intro animation.
+Icon = <string> - URL to the image you want displayed on the window.
+CloseCallback = <function> - Function to execute when the window is closed.
+]]
+local Tab = Window:MakeTab({
+	Name = "Tools",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+--[[
+Name = <string> - The name of the tab.
+Icon = <string> - The icon of the tab.
+PremiumOnly = <bool> - Makes the tab accessible to Sirus Premium users only.
+]]
+local Section = Tab:AddSection({
+	Name = "Section1"
+})
+
+--[[
+Name = <string> - The name of the section.
+]]
+OrionLib:MakeNotification({
+	Name = "Script!",
+	Content = "Made by kokko",
+	Image = "rbxassetid://4483345998",
+	Time = 9
+})
+
+--[[
+Title = <string> - The title of the notification.
+Content = <string> - The content of the notification.
+Image = <string> - The icon of the notification.
+Time = <number> - The duration of the notfication.
+]]
+OrionLib:MakeNotification({
+	Name = "UI!",
+	Content = "credits to orion for the libary",
+	Image = "rbxassetid://4483345998",
+	Time = 10
+})
+
+--[[
+Title = <string> - The title of the notification.
+Content = <string> - The content of the notification.
+Image = <string> - The icon of the notification.
+Time = <number> - The duration of the notfication.
+]]
+Tab:AddButton({
+	Name = "Noclip/fly tool!",
+	Callback = function()
+      	local x = Instance.new("HopperBin")
+x.Parent = game.Players.LocalPlayer.Backpack
+x.BinType = "Script"
+x.Name = "NoClip"
+
+local c = workspace.CurrentCamera
+local player = game.Players.LocalPlayer
+local userInput = game:GetService("UserInputService")
+local rs = game:GetService("RunService")
+local starterPlayer = game:GetService("StarterPlayer")
+
+local selected = false
+local speed = 60
+local lastUpdate = 0
+
+function getNextMovement(deltaTime)
+local nextMove = Vector3.new()
+-- Left/Right
+if userInput:IsKeyDown("A") or userInput:IsKeyDown("Left") then
+nextMove = Vector3.new(-1,0,0)
+elseif userInput:IsKeyDown("D") or userInput:IsKeyDown("Right") then
+nextMove = Vector3.new(1,0,0)
+end
+-- Forward/Back
+if userInput:IsKeyDown("W") or userInput:IsKeyDown("Up") then
+nextMove = nextMove + Vector3.new(0,0,-1)
+elseif userInput:IsKeyDown("S") or userInput:IsKeyDown("Down") then
+nextMove = nextMove + Vector3.new(0,0,1)
+end
+-- Up/Down
+if userInput:IsKeyDown("Space") then
+nextMove = nextMove + Vector3.new(0,1,0)
+elseif userInput:IsKeyDown("LeftControl") then
+nextMove = nextMove + Vector3.new(0,-1,0)
+end
+return CFrame.new( nextMove * (speed * deltaTime) )
+end
+
+function onSelected()
+local char = player.Character
+if char then
+local humanoid = char:WaitForChild("Humanoid")
+local root = char:WaitForChild("HumanoidRootPart")
+currentPos = root.Position
+selected = true
+root.Anchored = true
+lastUpdate = tick()
+humanoid.PlatformStand = true
+while selected do
+wait()
+local delta = tick()-lastUpdate
+local look = (c.Focus.p-c.CoordinateFrame.p).unit
+local move = getNextMovement(delta)
+local pos = root.Position
+root.CFrame = CFrame.new(pos,pos+look) * move
+lastUpdate = tick()
+end
+root.Anchored = false
+root.Velocity = Vector3.new()
+humanoid.PlatformStand = false
+end
+end
+
+function onDeselected()
+selected = false
+end
+
+x.Selected:connect(onSelected)
+x.Deselected:connect(onDeselected)
+  	end    
+})
+
+--[[
+Name = <string> - The name of the button.
+Callback = <function> - The function of the button.
+]]
+Tab:AddButton({
+	Name = "TP TOOL!",
+	Callback = function()
+   mouse = game.Players.LocalPlayer:GetMouse()
+tool = Instance.new("Tool")
+tool.RequiresHandle = false
+tool.Name = "TP TOOL"
+tool.Activated:connect(function()
+local pos = mouse.Hit+Vector3.new(0,2.5,0)
+pos = CFrame.new(pos.X,pos.Y,pos.Z)
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = pos
+end)
+tool.Parent = game.Players.LocalPlayer.Backpack
+  	end    
+})
+
+--[[
+Name = <string> - The name of the button.
+Callback = <function> - The function of the button.
+]]
+local Tab = Window:MakeTab({
+	Name = "Character stuff",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+--[[
+Name = <string> - The name of the tab.
+Icon = <string> - The icon of the tab.
+PremiumOnly = <bool> - Makes the tab accessible to Sirus Premium users only.
+]]
+
+Tab:AddSlider({
+	Name = "Speed Changer",
+	Min = 16,
+	Max = 1000,
+	Default = 5,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "Speed Power",
+	Callback = function(Value)
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = (Value)
+	end    
+})
+
+--[[
+Name = <string> - The name of the slider.
+Min = <number> - The minimal value of the slider.
+Max = <number> - The maxium value of the slider.
+Increment = <number> - How much the slider will change value when dragging.
+Default = <number> - The default value of the slider.
+ValueName = <string> - The text after the value number.
+Callback = <function> - The function of the slider.
+]]
+Tab:AddSlider({
+	Name = "Jump Changer",
+	Min = 16,
+	Max = 1000,
+	Default = 5,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "Jump Power",
+	Callback = function(Value)
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = (Value)
+	end    
+})
+
+--[[
+Name = <string> - The name of the slider.
+Min = <number> - The minimal value of the slider.
+Max = <number> - The maxium value of the slider.
+Increment = <number> - How much the slider will change value when dragging.
+Default = <number> - The default value of the slider.
+ValueName = <string> - The text after the value number.
+Callback = <function> - The function of the slider.
+]]
+local Tab = Window:MakeTab({
+	Name = "Misc",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+--[[
+Name = <string> - The name of the tab.
+Icon = <string> - The icon of the tab.
+PremiumOnly = <bool> - Makes the tab accessible to Sirus Premium users only.
+]]
+Tab:AddButton({
+	Name = "FE INVISIBLE!",
+	Callback = function()
+          
+--[[Invisibility Toggle
+
+You can find the orginal concept here: https://v3rmillion.net/showthread.php?tid=544634
+
+This method clones the character locally, teleports the real character to a safe location, then sets the character to the clone.
+Basically, your real character is in the sky while you are on the ground.
+
+
+Because of the way this works, games with a decent anti-cheat will fuck this up.
+If you turn it off, you have to go to a safe place before going invisible.
+
+Written by: BitingTheDust ; https://v3rmillion.net/member.php?action=profile&uid=1628149
+]]
+--Settings:
+local ScriptStarted = false
+local Keybind = "E" --Set to whatever you want, has to be the name of a KeyCode Enum.
+local Transparency = true --Will make you slightly transparent when you are invisible. No reason to disable.
+local NoClip = false --Will make your fake character no clip.
+
+local Player = game:GetService("Players").LocalPlayer
+local RealCharacter = Player.Character or Player.CharacterAdded:Wait()
+
+local IsInvisible = false
+
+RealCharacter.Archivable = true
+local FakeCharacter = RealCharacter:Clone()
+local Part
+Part = Instance.new("Part", workspace)
+Part.Anchored = true
+Part.Size = Vector3.new(200, 1, 200)
+Part.CFrame = CFrame.new(0, -500, 0) --Set this to whatever you want, just far away from the map.
+Part.CanCollide = true
+FakeCharacter.Parent = workspace
+FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
+
+for i, v in pairs(RealCharacter:GetChildren()) do
+  if v:IsA("LocalScript") then
+      local clone = v:Clone()
+      clone.Disabled = true
+      clone.Parent = FakeCharacter
+  end
+end
+if Transparency then
+  for i, v in pairs(FakeCharacter:GetDescendants()) do
+      if v:IsA("BasePart") then
+          v.Transparency = 0.7
+      end
+  end
+end
+local CanInvis = true
+function RealCharacterDied()
+  CanInvis = false
+  RealCharacter:Destroy()
+  RealCharacter = Player.Character
+  CanInvis = true
+  isinvisible = false
+  FakeCharacter:Destroy()
+  workspace.CurrentCamera.CameraSubject = RealCharacter.Humanoid
+
+  RealCharacter.Archivable = true
+  FakeCharacter = RealCharacter:Clone()
+  Part:Destroy()
+  Part = Instance.new("Part", workspace)
+  Part.Anchored = true
+  Part.Size = Vector3.new(200, 1, 200)
+  Part.CFrame = CFrame.new(9999, 9999, 9999) --Set this to whatever you want, just far away from the map.
+  Part.CanCollide = true
+  FakeCharacter.Parent = workspace
+  FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
+
+  for i, v in pairs(RealCharacter:GetChildren()) do
+      if v:IsA("LocalScript") then
+          local clone = v:Clone()
+          clone.Disabled = true
+          clone.Parent = FakeCharacter
+      end
+  end
+  if Transparency then
+      for i, v in pairs(FakeCharacter:GetDescendants()) do
+          if v:IsA("BasePart") then
+              v.Transparency = 0.7
+          end
+      end
+  end
+ RealCharacter.Humanoid.Died:Connect(function()
+ RealCharacter:Destroy()
+ FakeCharacter:Destroy()
+ end)
+ Player.CharacterAppearanceLoaded:Connect(RealCharacterDied)
+end
+RealCharacter.Humanoid.Died:Connect(function()
+ RealCharacter:Destroy()
+ FakeCharacter:Destroy()
+ end)
+Player.CharacterAppearanceLoaded:Connect(RealCharacterDied)
+local PseudoAnchor
+game:GetService "RunService".RenderStepped:Connect(
+  function()
+      if PseudoAnchor ~= nil then
+          PseudoAnchor.CFrame = Part.CFrame * CFrame.new(0, 5, 0)
+      end
+       if NoClip then
+      FakeCharacter.Humanoid:ChangeState(11)
+       end
+  end
+)
+
+PseudoAnchor = FakeCharacter.HumanoidRootPart
+local function Invisible()
+  if IsInvisible == false then
+      local StoredCF = RealCharacter.HumanoidRootPart.CFrame
+      RealCharacter.HumanoidRootPart.CFrame = FakeCharacter.HumanoidRootPart.CFrame
+      FakeCharacter.HumanoidRootPart.CFrame = StoredCF
+      RealCharacter.Humanoid:UnequipTools()
+      Player.Character = FakeCharacter
+      workspace.CurrentCamera.CameraSubject = FakeCharacter.Humanoid
+      PseudoAnchor = RealCharacter.HumanoidRootPart
+      for i, v in pairs(FakeCharacter:GetChildren()) do
+          if v:IsA("LocalScript") then
+              v.Disabled = false
+          end
+      end
+
+      IsInvisible = true
+  else
+      local StoredCF = FakeCharacter.HumanoidRootPart.CFrame
+      FakeCharacter.HumanoidRootPart.CFrame = RealCharacter.HumanoidRootPart.CFrame
+     
+      RealCharacter.HumanoidRootPart.CFrame = StoredCF
+     
+      FakeCharacter.Humanoid:UnequipTools()
+      Player.Character = RealCharacter
+      workspace.CurrentCamera.CameraSubject = RealCharacter.Humanoid
+      PseudoAnchor = FakeCharacter.HumanoidRootPart
+      for i, v in pairs(FakeCharacter:GetChildren()) do
+          if v:IsA("LocalScript") then
+              v.Disabled = true
+          end
+      end
+      IsInvisible = false
+  end
+end
+
+game:GetService("UserInputService").InputBegan:Connect(
+  function(key, gamep)
+      if gamep then
+          return
+      end
+      if key.KeyCode.Name:lower() == Keybind:lower() and CanInvis and RealCharacter and FakeCharacter then
+          if RealCharacter:FindFirstChild("HumanoidRootPart") and FakeCharacter:FindFirstChild("HumanoidRootPart") then
+              Invisible()
+          end
+      end
+  end
+)
+local Sound = Instance.new("Sound",game:GetService("SoundService"))
+Sound.SoundId = "rbxassetid://232127604"
+Sound:Play()
+game:GetService("StarterGui"):SetCore("SendNotification",{["Title"] = "Invisible Toggle Loaded",["Text"] = "Press "..Keybind.." to become change visibility.",["Duration"] = 20,["Button1"] = "Okay."})
+  	end    
+})
+
+--[[
+Name = <string> - The name of the button.
+Callback = <function> - The function of the button.
+]]
+Tab:AddButton({
+	Name = "ANTI FLING!",
+	Callback = function()
+-- // Constants \\ --
+-- [ Services ] --
+local Services = setmetatable({}, {__index = function(Self, Index)
+local NewService = game.GetService(game, Index)
+if NewService then
+Self[Index] = NewService
+end
+return NewService
+end})
+
+-- [ LocalPlayer ] --
+local LocalPlayer = Services.Players.LocalPlayer
+
+-- // Functions \\ --
+local function PlayerAdded(Player)
+   local Detected = false
+   local Character;
+   local PrimaryPart;
+
+   local function CharacterAdded(NewCharacter)
+       Character = NewCharacter
+       repeat
+           wait()
+           PrimaryPart = NewCharacter:FindFirstChild("HumanoidRootPart")
+       until PrimaryPart
+       Detected = false
+   end
+
+   CharacterAdded(Player.Character or Player.CharacterAdded:Wait())
+   Player.CharacterAdded:Connect(CharacterAdded)
+   Services.RunService.Heartbeat:Connect(function()
+       if (Character and Character:IsDescendantOf(workspace)) and (PrimaryPart and PrimaryPart:IsDescendantOf(Character)) then
+           if PrimaryPart.AssemblyAngularVelocity.Magnitude > 50 or PrimaryPart.AssemblyLinearVelocity.Magnitude > 100 then
+               if Detected == false then
+                   game.StarterGui:SetCore("ChatMakeSystemMessage", {
+                       Text = "Fling Exploit detected, Player: " .. tostring(Player);
+                       Color = Color3.fromRGB(255, 200, 0);
+                   })
+               end
+               Detected = true
+               for i,v in ipairs(Character:GetDescendants()) do
+                   if v:IsA("BasePart") then
+                       v.CanCollide = false
+                       v.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+                       v.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                       v.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
+                   end
+               end
+               PrimaryPart.CanCollide = false
+               PrimaryPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+               PrimaryPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+               PrimaryPart.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0)
+           end
+       end
+   end)
+end
+
+-- // Event Listeners \\ --
+for i,v in ipairs(Services.Players:GetPlayers()) do
+   if v ~= LocalPlayer then
+       PlayerAdded(v)
+   end
+end
+Services.Players.PlayerAdded:Connect(PlayerAdded)
+
+local LastPosition = nil
+Services.RunService.Heartbeat:Connect(function()
+   pcall(function()
+       local PrimaryPart = LocalPlayer.Character.PrimaryPart
+       if PrimaryPart.AssemblyLinearVelocity.Magnitude > 250 or PrimaryPart.AssemblyAngularVelocity.Magnitude > 250 then
+           PrimaryPart.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+           PrimaryPart.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+           PrimaryPart.CFrame = LastPosition
+
+           game.StarterGui:SetCore("ChatMakeSystemMessage", {
+               Text = "You were flung. Neutralizing velocity.";
+               Color = Color3.fromRGB(255, 0, 0);
+           })
+       elseif PrimaryPart.AssemblyLinearVelocity.Magnitude < 50 or PrimaryPart.AssemblyAngularVelocity.Magnitude > 50 then
+           LastPosition = PrimaryPart.CFrame
+       end
+   end)
+end)
+  	end    
+})
+
+--[[
+Name = <string> - The name of the button.
+Callback = <function> - The function of the button.
+]]
+OrionLib:Init()
