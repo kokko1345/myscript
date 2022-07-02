@@ -709,4 +709,125 @@ end)
 Name = <string> - The name of the button.
 Callback = <function> - The function of the button.
 ]]
+Tab:AddButton({
+	Name = "TP GUI",
+	Callback = function()
+-- TP GUI
+
+local ATPGUI = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local Credits = Instance.new("TextLabel")
+local TextButton = Instance.new("TextButton")
+local TextBox = Instance.new("TextBox")
+
+--Properties:
+
+ATPGUI.Name = "ATPGUI"
+ATPGUI.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ATPGUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ATPGUI.ResetOnSpawn = false
+
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ATPGUI
+MainFrame.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+MainFrame.BackgroundTransparency = 0.400
+MainFrame.BorderSizePixel = 3
+MainFrame.Position = UDim2.new(0.468553454, 0, 0.220064729, 0)
+MainFrame.Size = UDim2.new(0, 130, 0, 60)
+
+Credits.Name = "Credits"
+Credits.Parent = MainFrame
+Credits.BackgroundColor3 = Color3.fromRGB(85, 85, 127)
+Credits.BackgroundTransparency = 0.400
+Credits.Size = UDim2.new(0, 130, 0, 20)
+Credits.Font = Enum.Font.SourceSansBold
+Credits.Text = "TP GUI Made by Adamm#5598"
+Credits.TextColor3 = Color3.fromRGB(0, 0, 0)
+Credits.TextScaled = true
+Credits.TextSize = 14.000
+Credits.TextWrapped = true
+
+TextButton.Parent = MainFrame
+TextButton.BackgroundColor3 = Color3.fromRGB(170, 170, 255)
+TextButton.Position = UDim2.new(0, 0, 0.333333343, 0)
+TextButton.Size = UDim2.new(0, 130, 0, 20)
+TextButton.Font = Enum.Font.SourceSans
+TextButton.Text = "Click to TP"
+TextButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextButton.TextScaled = true
+TextButton.TextSize = 14.000
+TextButton.TextWrapped = true
+
+TextBox.Parent = TextButton
+TextBox.BackgroundColor3 = Color3.fromRGB(170, 170, 127)
+TextBox.Position = UDim2.new(0, 0, 0.966666698, 0)
+TextBox.Size = UDim2.new(0, 130, 0, 20)
+TextBox.Font = Enum.Font.SourceSans
+TextBox.Text = "Player Name..."
+TextBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextBox.TextScaled = true
+TextBox.TextSize = 14.000
+TextBox.TextWrapped = true
+
+-- Scripts:
+
+local function RFIR_fake_script() -- TextButton.LocalScript 
+	local script = Instance.new('LocalScript', TextButton)
+
+	function Clicked() 
+		
+		local pl = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart
+		local humanoid = game:GetService("Players").LocalPlayer.Character.Humanoid
+		local pl2 = game:GetService("Players").LocalPlayer.PlayerGui.ATPGUI.MainFrame.TextButton.TextBox.Text
+		
+		humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+		wait(0.1)
+		pl.CFrame = game.Players[pl2].Character.HumanoidRootPart.CFrame
+		
+	end
+	
+	script.Parent.MouseButton1Click:connect(Clicked)
+end
+coroutine.wrap(RFIR_fake_script)()
+local function EXYBPLM_fake_script() -- MainFrame.LocalScript 
+	local script = Instance.new('LocalScript', MainFrame)
+
+	local players = game:service('Players');
+	local player = players.LocalPlayer;
+	local mouse = player:GetMouse();
+	local run = game:service('RunService');
+	local stepped = run.Stepped;
+	draggable = function(obj)
+		spawn(function()
+			obj.Active = true;
+			local minitial;
+			local initial;
+			local isdragging;
+			obj.InputBegan:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+					isdragging = true;
+					minitial = input.Position;
+					initial = obj.Position;
+					local con;
+					con = stepped:Connect(function()
+						if isdragging then
+							local delta = Vector3.new(mouse.X, mouse.Y, 4000) - minitial;
+							obj.Position = UDim2.new(initial.X.Scale, initial.X.Offset + delta.X, initial.Y.Scale, initial.Y.Offset + delta.Y);
+						else
+							con:Disconnect();
+						end;
+					end);
+					input.Changed:Connect(function()
+						if input.UserInputState == Enum.UserInputState.End then
+							isdragging = false;
+						end;
+					end);
+				end;
+			end);
+		end)
+	end;
+	
+	draggable(script.Parent)
+end
+coroutine.wrap(EXYBPLM_fake_script)()
 OrionLib:Init()
