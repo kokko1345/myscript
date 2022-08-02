@@ -450,4 +450,7 @@ Tab:AddButton({
 	Name = "TP GUI",
 	Callback = function()
 loadstring(game:HttpGet("https://pastebin.com/raw/H7UXP01e", true))()
+	end
+})
 OrionLib:Init()
+OrionLib:Destroy()
